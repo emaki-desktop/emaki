@@ -8,6 +8,10 @@ cards stack, what Do Not Disturb hides.
 
 > Only one notification daemon can run. Stop mako, dunst or swaync before starting the shell.
 
+The shell sends notifications of its own too, as devices, drives, the charger, networks and
+the temperature change. Which changes get a notification and which get the on-screen display's
+capsule is in [system-feedback.md](system-feedback.md).
+
 ## Toasts (`toasts.rs`)
 
 A banner slides in at the top-right for each arriving notification, newest on top, at most
@@ -137,6 +141,10 @@ A critical notification shows whatever its app's rule, as it does through Do Not
 toasts read the rules (`toasts.rs`: `banner`, `silenced`), so a change applies to the next
 notification.
 
+The shell's own notifications (`emaki-bluetooth`, `emaki-drives` and the rest) aren't listed
+with the apps: the same page turns each kind on or off under **System Feedback**
+([system-feedback.md](system-feedback.md#settings)), which silences its capsules too.
+
 ## Do Not Disturb (`dnd.rs`)
 
 While on, toasts are hidden: critical ones still show, and everything still collects in the
@@ -157,6 +165,10 @@ when off) is read when there's no `dnd.json`.
 - An indicator before the clock shows a **moon** while Do Not Disturb is on, or an accent **bell**
   while something arrived since the center was last opened. It shows nothing otherwise. Left-click
   opens the center; right-click opens the Do Not Disturb menu.
+- On a ThinkPad, the lid logo dot or the ThinkVantage light can pulse while something arrived
+  unseen, and stay lit during Do Not Disturb ([Indicator Light](system-feedback.md#settings)).
+  What counts as seen is kept in `services/notification_history.rs` (`mark_seen`, `unseen`), so
+  the light's own thread can read it.
 
 ## IPC
 

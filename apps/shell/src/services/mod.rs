@@ -17,7 +17,7 @@
 //! - [`network::connections`] — wired, VPN and hotspot (amane's `Network`).
 //! - [`network::rfkill`] — airplane mode: every radio blocked.
 //! - [`network::tailscale`] — the tailnet, its exit nodes and settings (the CLI).
-//! - [`network::bt_battery`] — a notification when a Bluetooth device runs low.
+//! - [`feedback`] — capsules and notifications as devices, power and networks change.
 //!
 //! Display (`display/`):
 //!
@@ -63,6 +63,7 @@ pub mod clock;
 pub mod desktop;
 pub mod display;
 pub mod do_not_disturb;
+pub mod feedback;
 pub mod launcher;
 pub mod media_art;
 pub mod network;

@@ -68,6 +68,14 @@ pub const ICON_COMPUTER: char = '\u{e30a}';
 pub const ICON_DISPLAY: char = '\u{e30c}';
 /// A phone beside a screen (`devices_other`): a device of no known kind.
 pub const ICON_DEVICE_OTHER: char = '\u{e337}';
+/// The USB trident (`usb`): a USB device of no better-known kind.
+pub const ICON_USB: char = '\u{e1e0}';
+/// A printer (`print`).
+pub const ICON_PRINTER: char = '\u{e8ad}';
+/// A drive (`hard_drive`): a removable disk.
+pub const ICON_DRIVE: char = '\u{f80e}';
+/// An arrow up over a bar (`eject`): a drive let go.
+pub const ICON_EJECT: char = '\u{e8fb}';
 /// The Bluetooth rune (`bluetooth`).
 pub const ICON_BLUETOOTH: char = '\u{e1a7}';
 /// The Bluetooth rune with dots either side (`bluetooth_connected`).

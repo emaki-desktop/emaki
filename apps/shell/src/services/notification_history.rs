@@ -38,6 +38,30 @@ static SAVED: Mutex<Option<History>> = Mutex::new(None);
 
 /// Puts back what was kept when the shell last stopped. Once, at startup,
 /// before [`watch`].
+// the newest notification seen in the center, for the bar's dot and the
+// indicator light, read from either's thread
+static SEEN: std::sync::atomic::AtomicU32 = std::sync::atomic::AtomicU32::new(0);
+
+/// The center was opened with `newest` the newest notification in it:
+/// everything up to it counts as seen.
+pub fn mark_seen(newest: u32) {
+    SEEN.fetch_max(newest, std::sync::atomic::Ordering::Relaxed);
+    super::feedback::led::nudge();
+}
+
+/// How many arrived since the center was last opened, from any thread;
+/// what was restored from before a restart was there already. Only
+/// critical ones when `critical_only`.
+pub fn unseen(critical_only: bool) -> usize {
+    let seen = SEEN.load(std::sync::atomic::Ordering::Relaxed);
+    Notifications::read()
+        .list()
+        .iter()
+        .filter(|n| n.id() > seen && !n.restored())
+        .filter(|n| !critical_only || n.urgency() == amane::Urgency::Critical)
+        .count()
+}
+
 pub fn restore() {
     let Some(History(kept)) = state::load::<History>() else {
         return;

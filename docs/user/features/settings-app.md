@@ -105,7 +105,9 @@ Writes `notifications.json` (`notifications.rs`), and the notification sound to 
 | Setting | Control | Field |
 |---|---|---|
 | Sound | switch: Play a sound for notifications; under it the sound (a dropdown, with Play) and Alert volume, dimmed while it's off | `sound.json`: `notification`, `volume` |
-| Apps | a row per app that has sent a notification (from the cache's `notifiers-seen.json`), with its icon and a menu: Banners and List, List Only, Off | `apps` (an allowed app is left out) |
+| System Feedback | a menu per kind (Bluetooth, USB Devices, Drives, Power, Network, Displays, Screenshots, Temperature): Show or Off; switches: Open drives as they're plugged in, Play a sound as devices connect. See [system-feedback.md](system-feedback.md#settings) | `system_off`, `keep_drives_unmounted`, `connection_sounds` |
+| Indicator Light | only with a ThinkPad's lid logo dot or ThinkVantage light: Pulse for (All Notifications, Critical Only, Off), Light (when there are both), switch: Stay lit during Do Not Disturb | `pulse`, `light`, `light_for_dnd` |
+| Apps | a row per app that has sent a notification (from the cache's `notifiers-seen.json`), with its icon and a menu: Banners and List, List Only, Off; the shell's own are under System Feedback | `apps` (an allowed app is left out) |
 
 ## Desktop
 

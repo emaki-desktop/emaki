@@ -72,8 +72,8 @@ An action that fails shows why in red for 10 seconds.
 `Indicator::Phone` (`phone` in `status-bar.json` and the IPC). It shows while a
 paired phone is connected and has sent its charge. It's accent while charging
 and red when low. The tooltip has the name and the charge. A phone running low
-warns at 20 % and 10 % like a Bluetooth device does (`services/network/bt_battery.rs`),
-but not while it charges.
+warns at 20 % and 10 % like a Bluetooth device does (`services/feedback/bluetooth.rs`,
+[system-feedback.md](system-feedback.md)), but not while it charges.
 
 ## Messages
 

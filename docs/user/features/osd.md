@@ -17,6 +17,12 @@ changes it in place.
 | Caps Lock, Num Lock | the lock's | "Caps Lock On" / "Off" | the keyboards' LEDs |
 | Airplane mode | the airplane | "Airplane Mode On" / "Off" | every radio blocked or unblocked (`rfkill`) |
 | Power mode | the mode's | its name ("Power Saver") | the mode changing (power-profiles-daemon) |
+| Device | the device's (headphones, keyboard, USB, display, battery, drive …) | its name, then a quieter detail ("Connected · 80 %", "Safe to Remove") | [system feedback](system-feedback.md): Bluetooth, USB devices, drives, the charger, Ethernet, displays |
+
+A **device** capsule comes from the feedback services' queue (`services/feedback`: `echo`,
+`take_echo`), posted from their own threads. It waits for whatever shows to run out rather than
+cutting it short, so a headset connecting never hides the volume you're setting. At most three
+wait; the same one isn't queued twice; while Quick Settings is open they're dropped.
 
 ## How it hears of a change
 
@@ -74,4 +80,5 @@ Tokens: `osd.width`, `osd.height`, `osd.radius`, `osd.pad`, `osd.offset`, `osd.t
 - A keyboard light whose key is the firmware's shows up to a second late (it's polled: an LED
   announces no change).
 - The keyboard layout isn't shown yet: amane doesn't read niri's layout events.
-- No settings: it can't be turned off or moved.
+- No settings for the levels: they can't be turned off or moved. Device capsules can be turned
+  off by kind ([system-feedback.md](system-feedback.md#settings)).

@@ -108,7 +108,8 @@ pub use controls::{
 pub use foundation::{area, color, fuzzy, icons, layout, symbol};
 pub use look::{glass, glass_region, lab, material, style};
 pub use platform::{
-    app, app_icon, launch, marker, process, secrets, service, settings, shell_ipc, sounds,
+    app, app_icon, launch, marker, process, secrets, sensors, service, settings, shell_ipc, sounds,
+    usb_c,
 };
 
 // what's below the UI, from emaki-base, so an app needs only the kit

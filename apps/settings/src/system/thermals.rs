@@ -10,6 +10,7 @@ use amane::Service;
 use emaki_kit::color::Accent;
 use emaki_kit::form::{FormRow, Group};
 use emaki_kit::icons::{ICON_COMPUTER, ICON_FAN, ICON_STORAGE, ICON_THERMOSTAT};
+use emaki_kit::sensors;
 
 use crate::group;
 
@@ -68,35 +69,14 @@ impl Kind {
     }
 }
 
-/// Maps a chip name (`/sys/class/hwmon/hwmonN/name`) to a readable kind.
+/// Maps a chip name (`/sys/class/hwmon/hwmonN/name`) to a readable kind,
+/// as the shell's temperature warning knows it too.
 fn kind_of(chip: &str) -> Kind {
-    match chip {
-        "k10temp" | "coretemp" | "zenpower" | "cpu_thermal" => Kind::Cpu,
-        "amdgpu" | "nouveau" | "radeon" | "i915" => Kind::Gpu,
-        "nvme" => Kind::Nvme,
-        _ => Kind::Other,
-    }
-}
-
-/// A human label for `chip`, overriding the raw sysfs name where we can.
-fn display(chip: &str, sensor_label: &str) -> String {
-    let readable = match chip {
-        "k10temp" | "coretemp" | "zenpower" | "cpu_thermal" => "CPU",
-        "amdgpu" => "GPU",
-        "nvme" => "NVMe",
-        "acpitz" => "Mainboard",
-        "thinkpad" => "ThinkPad",
-        other => other,
-    };
-    if sensor_label.is_empty() || sensor_label.eq_ignore_ascii_case(chip) {
-        readable.to_string()
-    } else {
-        // skip boilerplate like "Composite" that adds nothing
-        if sensor_label.eq_ignore_ascii_case("composite") {
-            readable.to_string()
-        } else {
-            format!("{readable} · {sensor_label}")
-        }
+    match sensors::chip_of(chip) {
+        sensors::Chip::Cpu => Kind::Cpu,
+        sensors::Chip::Gpu => Kind::Gpu,
+        sensors::Chip::Nvme => Kind::Nvme,
+        sensors::Chip::Other => Kind::Other,
     }
 }
 
@@ -181,7 +161,7 @@ fn read_temperatures(hwmon: &Path, chip: &str, kind: Kind, out: &mut Vec<Reading
             continue;
         };
         let sensor_label = read_text(&hwmon.join(format!("temp{i}_label")));
-        let label = display(chip, &sensor_label);
+        let label = sensors::label(chip, &sensor_label);
         out.push(Reading {
             label,
             kind,
@@ -274,9 +254,12 @@ mod tests {
 
     #[test]
     fn display_folds_composite_into_the_chip_name() {
-        assert_eq!(display("nvme", "Composite"), "NVMe");
-        assert_eq!(display("k10temp", ""), "CPU");
-        assert_eq!(display("k10temp", "Tctl"), "CPU · Tctl");
-        assert_eq!(display("coretemp", "Package id 0"), "CPU · Package id 0");
+        assert_eq!(sensors::label("nvme", "Composite"), "NVMe");
+        assert_eq!(sensors::label("k10temp", ""), "CPU");
+        assert_eq!(sensors::label("k10temp", "Tctl"), "CPU · Tctl");
+        assert_eq!(
+            sensors::label("coretemp", "Package id 0"),
+            "CPU · Package id 0"
+        );
     }
 }

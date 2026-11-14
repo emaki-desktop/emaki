@@ -3,6 +3,7 @@
 #
 #   programs.emaki.nixosActivate.enable = true;      # applies built NixOS configurations
 #   programs.emaki.chargeThreshold.enable = true;    # sets BAT*/charge_control_*_threshold
+#   programs.emaki.removableDrives.enable = true;    # UDisks2, for drives the shell mounts
 #
 # Settings builds the configuration as you and only hands the activate helper a store path; root
 # never evaluates the repo. Anything that runs as you can call `pkexec emaki-nixos-activate` too,
@@ -28,6 +29,7 @@ let
   fprintCfg = config.programs.emaki.fingerprint;
   firmwareCfg = config.programs.emaki.firmware;
   cameraCfg = config.programs.emaki.cameraBlock;
+  drivesCfg = config.programs.emaki.removableDrives;
 
   activate = pkgs.writeShellApplication {
     name = "emaki-nixos-activate";
@@ -293,6 +295,13 @@ in
     reachable
   '';
 
+  options.programs.emaki.removableDrives.enable = lib.mkEnableOption ''
+    UDisks2, which the shell asks to mount a USB stick, SD card or external disk as it's
+    plugged in, and to eject it again from its notification. Turns on services.udisks2; its
+    own polkit rules let the active session mount and eject removable drives without a
+    password
+  '';
+
   config = lib.mkMerge [
     (lib.mkIf activateCfg.enable {
       security.polkit.enable = true;
@@ -317,6 +326,9 @@ in
     })
     (lib.mkIf firmwareCfg.enable {
       services.fwupd.enable = true;
+    })
+    (lib.mkIf drivesCfg.enable {
+      services.udisks2.enable = true;
     })
     (lib.mkIf cameraCfg.enable {
       security.polkit.enable = true;

@@ -252,15 +252,7 @@ pub(crate) fn refused(failure: Option<&ServiceError>) -> bool {
     failure.is_some_and(|failure| failure.kind == ErrorKind::AuthenticationFailed)
 }
 
-/// A few words for why joining a network failed.
-pub(crate) fn failure_label(failure: &ServiceError) -> &'static str {
-    match failure.kind {
-        ErrorKind::AuthenticationFailed => "Wrong password",
-        ErrorKind::Unreachable | ErrorKind::Gone => "Not in range",
-        ErrorKind::TimedOut => "Timed out",
-        _ => "Couldn't join",
-    }
-}
+pub(crate) use crate::services::network::failure_label;
 
 fn ap_item(ap: &AccessPoint, joining: &Joining) -> ListItem {
     let ssid = ap.ssid().to_string();

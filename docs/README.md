@@ -68,6 +68,7 @@ The docs use one name for each thing:
 | Quick Settings | GNOME's quick settings as a grid of glass modules, with Edit Controls | [user/features/quick-settings.md](user/features/quick-settings.md) |
 | Desktop widgets | readings and a clock on the wallpaper, on Quick Settings' grid | [user/features/widgets.md](user/features/widgets.md) |
 | On-screen display | the capsule that shows volume, brightness, the keyboard light, a lock key or a switch as it changes | [user/features/osd.md](user/features/osd.md) |
+| System feedback | a capsule or a notification as devices, drives, the charger, networks, displays, screenshots and the temperature change; a ThinkPad's light pulsing for unseen notifications | [user/features/system-feedback.md](user/features/system-feedback.md) |
 | Alert | the shell's alert in the middle of the screen, for questions like "Restart now?" | [user/features/quick-settings.md#the-alert](user/features/quick-settings.md#the-alert) |
 | Emaki Settings | the settings app: appearance, the desktop's widgets, the launcher, and the System pages that manage the NixOS configuration | [user/features/settings-app.md](user/features/settings-app.md) |
 | Displays | Emaki Settings' page for the screens: what each can do (OLED, HDR, VRR range), resolution, refresh (lower on battery), scale, rotation, arrangement, HDR, a monitor's brightness over DDC/CI, Night Light's schedule | [user/features/displays.md](user/features/displays.md) |

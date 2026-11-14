@@ -122,6 +122,15 @@ follows [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 - Launcher: **Wi‑Fi Networks** and **Bluetooth Devices** open a list to join a network or
   connect or pair a device. A network's password is typed hidden in the field and never kept.
   From the pill, saved networks and paired devices are found by name.
+- System feedback (`services/feedback/`, [system-feedback.md](docs/user/features/system-feedback.md)):
+  a capsule as a Bluetooth or USB device, an Ethernet cable, a display or the charger
+  (with a USB‑C charger's watts) comes or goes; notifications for a drive to open or eject, low
+  and critical laptop battery, a slow USB‑C charger, a failed Wi‑Fi or VPN connection, a VPN
+  dropped, a captive portal, a screenshot saved (Copy, Open, Show in Files) and the computer
+  running hot. Each kind can be turned off in Emaki Settings → Notifications, which also has
+  connection sounds and, on a ThinkPad, a lid logo or ThinkVantage light that pulses for
+  unseen notifications. The NixOS module's `programs.emaki.removableDrives.enable` turns on
+  UDisks2 for the drives.
 
 ### Fixed
 

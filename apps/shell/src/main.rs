@@ -134,7 +134,7 @@ fn main() -> ExitCode {
     services::phone::start();
     // and the bar's own bus service: other programs' items and activities
     services::status_apps::serve();
-    services::network::bt_battery::watch();
+    services::feedback::start();
     // and lowers the displays' refresh rate on battery, when asked to
     services::power::power_refresh::watch();
     services::power::battery_mode::watch();

@@ -67,9 +67,10 @@ page is the whole manager.
 A device that asks to pair while the Bluetooth page isn't showing asks through the shell's alert
 (`surfaces/alert/bluetooth.rs`): Pair or Cancel for a code to confirm, the code to type on a
 keyboard, and **Enter Code…**, which opens the page, for a code to type here. The shell is
-BlueZ's pairing agent (`Bluetooth::serve_agent`). A connected device's battery warns once at
-20 % and once at 10 % per connection (`services/network/bt_battery.rs`), and so does a phone
-through KDE Connect while it isn't charging. A phone asking to pair through KDE Connect asks
+BlueZ's pairing agent (`Bluetooth::serve_agent`). A device connecting or disconnecting shows a
+capsule, and its battery warns once at 20 % and once at 10 % per connection, and so does a
+phone through KDE Connect while it isn't charging (`services/feedback/bluetooth.rs`; see
+[system-feedback.md](system-feedback.md)). A phone asking to pair through KDE Connect asks
 the same way (`surfaces/alert/phone.rs`) while the Phone page isn't showing.
 
 The bar also shows GNOME's status icons, each only while it applies:

@@ -92,6 +92,24 @@ pub fn is_open(panel: Panel) -> bool {
     OPEN.with(Cell::get) == Some(panel)
 }
 
+// which panel is open, for threads other than the UI's: 0 for none
+static OPEN_ANYWHERE: std::sync::atomic::AtomicU8 = std::sync::atomic::AtomicU8::new(0);
+
+fn code(panel: Option<Panel>) -> u8 {
+    match panel {
+        None => 0,
+        Some(Panel::Notifications) => 1,
+        Some(Panel::QuickSettings) => 2,
+        Some(Panel::Launcher) => 3,
+    }
+}
+
+/// [`is_open`] from any thread, as a service's own thread asks before
+/// telling of something the panel already shows.
+pub fn is_open_anywhere(panel: Panel) -> bool {
+    OPEN_ANYWHERE.load(std::sync::atomic::Ordering::Relaxed) == code(Some(panel))
+}
+
 fn set(next: Option<Panel>) {
     if next.is_some() {
         follow_pointer();
@@ -100,6 +118,7 @@ fn set(next: Option<Panel>) {
     if previous == next {
         return;
     }
+    OPEN_ANYWHERE.store(code(next), std::sync::atomic::Ordering::Relaxed);
 
     for hooks in hooks(previous) {
         (hooks.closed)();

@@ -25,6 +25,7 @@ use amane::{
 };
 
 use crate::chrome::panel::{self, overlay};
+use crate::services::feedback;
 use crate::tokens::{Styled, osd, sys};
 use emaki_kit::glass_region;
 use emaki_kit::icons::{
@@ -73,12 +74,19 @@ pub enum Readout {
     KeyboardLight { level: u32, max: u32 },
     /// Something switched or picked: a glyph and what it now is.
     Label { glyph: char, text: String },
+    /// A device came or went, posted by [`feedback::echo`]: its glyph, its name, and a
+    /// quieter detail after it, like "Connected · 80 %".
+    Device {
+        glyph: char,
+        name: String,
+        detail: String,
+    },
 }
 
 impl Readout {
     fn linger(&self) -> Duration {
         match self {
-            Self::Label { .. } => DEVICE_LINGER,
+            Self::Label { .. } | Self::Device { .. } => DEVICE_LINGER,
             _ => LINGER,
         }
     }
@@ -93,6 +101,19 @@ thread_local! {
     // how far it has faded in
     static FADE: RefCell<amane::Animation> = RefCell::new(motion::fade(0.0, motion::duration::fade()));
     static OPENING: Cell<bool> = const { Cell::new(false) };
+}
+
+/// The next device echo from [`feedback`], when nothing shows. While
+/// Quick Settings is open its rows already show what changed, so the
+/// echoes go unshown.
+fn next_echo(open: bool) -> Option<Readout> {
+    feedback::Echoes::watch();
+    let controls = panel::is_open(panel::Panel::QuickSettings);
+    feedback::take_echo(open, controls).map(|echo| Readout::Device {
+        glyph: echo.glyph,
+        name: echo.name,
+        detail: echo.detail,
+    })
 }
 
 /// Shows `readout`, in place of whatever shows, for its linger from now.
@@ -126,7 +147,11 @@ pub fn surface() -> LayerWindow {
     watch::changes();
     Osd::watch();
 
-    let open = UNTIL.get().is_some_and(|until| Instant::now() < until);
+    let mut open = UNTIL.get().is_some_and(|until| Instant::now() < until);
+    if let Some(readout) = next_echo(open) {
+        show(readout);
+        open = true;
+    }
     let shown = faded_in(open);
 
     let readout = SHOWN.with_borrow(Clone::clone);
@@ -212,12 +237,37 @@ fn content(readout: &Readout, width: f32) -> Row {
                     .max_lines(1),
             ),
         ),
+        Readout::Device {
+            glyph,
+            name,
+            detail,
+        } => (*glyph, boxed(device_line(name, detail, rest))),
     };
 
     let glyph = slot(side).child(icon(glyph, sys::size::icon::m(), label));
     Row::new(vec![boxed(glyph), after])
         .width(width)
         .gap(gap)
+        .align(Center)
+}
+
+/// A device's name, cut short before its detail is, then the detail quieter.
+fn device_line(name: &str, detail: &str, width: f32) -> Row {
+    let name = Text::new(name.to_string())
+        .style(osd::label())
+        .color(material::label(Level::Primary))
+        .elide()
+        .max_lines(1);
+    if detail.is_empty() {
+        return Row::new(vec![boxed(name)]).width(width).align(Center);
+    }
+    let detail = Text::new(detail.to_string())
+        .style(osd::label())
+        .color(material::label(Level::Secondary))
+        .max_lines(1);
+    Row::new(vec![boxed(name), boxed(detail)])
+        .width(width)
+        .gap(sys::space::gap::s())
         .align(Center)
 }
 

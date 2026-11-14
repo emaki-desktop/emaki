@@ -86,6 +86,8 @@ impl Connections {
     }
 
     pub fn set_vpn(uuid: &str, on: bool) {
+        // asked for here, so its going down isn't told of as a drop
+        crate::services::feedback::network::asked(uuid);
         if on {
             remember_vpn(uuid);
             Network::activate(uuid);

@@ -392,6 +392,28 @@ const INDEX: &[Entry] = &[
         "settings.sound.notifications.sound",
         &["alert sound", "chime"],
     ),
+    row(
+        "notifications",
+        "System Feedback",
+        "settings.notifications.system.sounds",
+        &[
+            "usb",
+            "bluetooth",
+            "device connected",
+            "drive",
+            "charger",
+            "toast",
+            "osd",
+            "device sound",
+            "plug sound",
+        ],
+    ),
+    row(
+        "notifications",
+        "Indicator light",
+        "settings.notifications.light.pulse",
+        &["led", "lid logo", "thinkvantage", "blink", "pulse"],
+    ),
     // Input
     row(
         "keyboard",

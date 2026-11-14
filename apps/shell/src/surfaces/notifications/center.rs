@@ -9,7 +9,7 @@
 //! under the app's name, with "Show Less" and a clear button; a single
 //! notification is a plain card. Cards that go fade and slide away.
 
-use std::cell::{Cell, RefCell};
+use std::cell::RefCell;
 use std::collections::HashSet;
 use std::time::SystemTime;
 
@@ -49,9 +49,6 @@ thread_local! {
     // the groups drawn last time, so one whose last card went can finish
     // sliding it out
     static DRAWN: RefCell<Vec<(String, String)>> = const { RefCell::new(Vec::new()) };
-
-    // the newest notification the user has seen, for the bar's dot
-    static SEEN: Cell<u32> = const { Cell::new(0) };
 }
 
 // ───── runtime ───────────────────────────────────────────────────────────────
@@ -71,7 +68,7 @@ fn opened() {
         .map(Notification::id)
         .max()
         .unwrap_or(0);
-    SEEN.with(|seen| seen.set(seen.get().max(newest)));
+    crate::services::notification_history::mark_seen(newest);
 }
 
 /// The center closed: stacks fold back up, and the calendar comes back to
@@ -84,12 +81,7 @@ fn closed() {
 /// How many arrived since the center was last opened; what was restored
 /// from before a restart was there already.
 pub fn unseen_count() -> usize {
-    let seen = SEEN.with(Cell::get);
-    Notifications::read()
-        .list()
-        .iter()
-        .filter(|n| n.id() > seen && !n.restored())
-        .count()
+    crate::services::notification_history::unseen(false)
 }
 
 // ───── groups ────────────────────────────────────────────────────────────────
